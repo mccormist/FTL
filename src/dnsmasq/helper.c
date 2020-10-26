@@ -241,6 +241,10 @@ int create_helper(int event_fd, int err_fd, uid_t uid, gid_t gid, long max_fd)
        else 
 	continue;
 
+	/**** Pi-hole modification ****/
+	logg("DEBUG: dnsmasq helper called for action \"%s\"", action_str);
+	/******************************/
+
       	
       /* stringify MAC into dhcp_buff */
       p = daemon->dhcp_buff;
@@ -641,6 +645,12 @@ int create_helper(int event_fd, int err_fd, uid_t uid, gid_t gid, long max_fd)
       close(pipefd[0]);
 
       p =  strrchr(daemon->lease_change_command, '/');
+      /**************************** Pi-hole modification ****************************/
+      logg("DEBUG: dnsmasq helper executing \"%s\" with arguments: \"%s %s %s %s\"",
+	   p ? p+1 : daemon->lease_change_command, action_str,
+	   (is6 && data.action != ACTION_ARP) ? daemon->packet : daemon->dhcp_buff,
+	   daemon->addrbuff, hostname);
+      /******************************************************************************/
       if (err == 0)
 	{
 	  execl(daemon->lease_change_command, 
@@ -650,6 +660,10 @@ int create_helper(int event_fd, int err_fd, uid_t uid, gid_t gid, long max_fd)
 	  err = errno;
 	}
       /* failed, send event so the main process logs the problem */
+      /**************************** Pi-hole modification ****************************/
+      logg("DEBUG: dnsmasq helper failed to execute \"%s\": %s",
+	   p ? p+1 : daemon->lease_change_command, strerror(err));
+      /******************************************************************************/
       send_event(event_fd, EVENT_EXEC_ERR, err, NULL);
       _exit(0); 
     }
