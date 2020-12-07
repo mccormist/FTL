@@ -16,12 +16,13 @@
 extern const char *regextype[];
 
 // Use TRE instead of GNU regex library (compiled into FTL itself)
-#define USE_TRE_REGEX
+//#define USE_TRE_REGEX
 
 #ifdef USE_TRE_REGEX
 #include "tre-regex/regex.h"
 #else
 #include <regex.h>
+#define REG_OK REG_NOERROR
 #endif
 
 typedef struct regex_data {
