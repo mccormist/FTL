@@ -1523,7 +1523,7 @@ void receive_query(struct listener *listen, time_t now)
 	}
 
     /*********** Pi-hole modification ***********/
-    FTL_next_iface(ifr.ifr_name, listen->iface->addr);
+    FTL_next_iface(ifr.ifr_ifindex, daemon->listeners);
     /********************************************/
     }
    
